@@ -24,17 +24,24 @@ export default function ProductsAdmin() {
   }, [router])
 
   const handleSave = (product: Product) => {
-    if (editingProduct) {
-      const updated = products.map(p => p.id === editingProduct.id ? product : p)
-      setProducts(updated)
-      saveProducts(updated)
-      setEditingProduct(null)
-    } else {
-      const newProduct = { ...product, id: Date.now().toString() }
-      const updated = [...products, newProduct]
-      setProducts(updated)
-      saveProducts(updated)
-      setIsAdding(false)
+    try {
+      if (editingProduct) {
+        const updated = products.map(p => p.id === editingProduct.id ? product : p)
+        setProducts(updated)
+        saveProducts(updated)
+        setEditingProduct(null)
+        alert('Produkt został zaktualizowany!')
+      } else {
+        const newProduct = { ...product, id: Date.now().toString() }
+        const updated = [...products, newProduct]
+        setProducts(updated)
+        saveProducts(updated)
+        setIsAdding(false)
+        alert('Produkt został dodany!')
+      }
+    } catch (error) {
+      console.error('Błąd podczas zapisywania produktu:', error)
+      alert('Wystąpił błąd podczas zapisywania produktu')
     }
   }
 
@@ -91,7 +98,7 @@ export default function ProductsAdmin() {
 
         {(isAdding || editingProduct) && (
           <ProductForm
-            product={editingProduct || { id: '', title: '', description: '', features: [''], image: '' }}
+            product={editingProduct || { id: '', title: '', description: '', features: [], image: '' }}
             onSave={handleSave}
             onCancel={() => {
               setIsAdding(false)
@@ -150,31 +157,83 @@ function ProductForm({ product, onSave, onCancel }: { product: Product; onSave: 
     setImagePreview(product.image || null)
   }, [product])
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!formData.title.trim() || !formData.description.trim()) {
+      alert('Proszę wypełnić wszystkie wymagane pola')
+      return
+    }
+    onSave({
+      ...formData,
+      features: [],
+    })
+  }
+
+  const compressImage = (file: File, maxWidth: number = 800, maxHeight: number = 800, quality: number = 0.7): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const img = new Image()
+        img.onload = () => {
+          const canvas = document.createElement('canvas')
+          let width = img.width
+          let height = img.height
+
+          // Calculate new dimensions
+          if (width > height) {
+            if (width > maxWidth) {
+              height = (height * maxWidth) / width
+              width = maxWidth
+            }
+          } else {
+            if (height > maxHeight) {
+              width = (width * maxHeight) / height
+              height = maxHeight
+            }
+          }
+
+          canvas.width = width
+          canvas.height = height
+
+          const ctx = canvas.getContext('2d')
+          if (!ctx) {
+            reject(new Error('Nie można utworzyć kontekstu canvas'))
+            return
+          }
+
+          ctx.drawImage(img, 0, 0, width, height)
+          const compressedBase64 = canvas.toDataURL('image/jpeg', quality)
+          resolve(compressedBase64)
+        }
+        img.onerror = reject
+        img.src = e.target?.result as string
+      }
+      reader.onerror = reject
+      reader.readAsDataURL(file)
+    })
+  }
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      // Check if file is an image
       if (!file.type.startsWith('image/')) {
         alert('Proszę wybrać plik obrazu')
         return
       }
       
-      // Check file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         alert('Plik jest zbyt duży. Maksymalny rozmiar to 5MB')
         return
       }
 
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        const base64String = reader.result as string
-        setFormData({ ...formData, image: base64String })
-        setImagePreview(base64String)
+      try {
+        const compressedBase64 = await compressImage(file)
+        setFormData({ ...formData, image: compressedBase64 })
+        setImagePreview(compressedBase64)
+      } catch (error) {
+        console.error('Błąd podczas kompresji obrazu:', error)
+        alert('Błąd podczas przetwarzania obrazu')
       }
-      reader.onerror = () => {
-        alert('Błąd podczas wczytywania pliku')
-      }
-      reader.readAsDataURL(file)
     }
   }
 
@@ -186,28 +245,6 @@ function ProductForm({ product, onSave, onCancel }: { product: Product; onSave: 
   const removeImage = () => {
     setFormData({ ...formData, image: '' })
     setImagePreview(null)
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onSave({
-      ...formData,
-      features: formData.features.filter(f => f.trim() !== ''),
-    })
-  }
-
-  const addFeature = () => {
-    setFormData({ ...formData, features: [...formData.features, ''] })
-  }
-
-  const updateFeature = (index: number, value: string) => {
-    const newFeatures = [...formData.features]
-    newFeatures[index] = value
-    setFormData({ ...formData, features: newFeatures })
-  }
-
-  const removeFeature = (index: number) => {
-    setFormData({ ...formData, features: formData.features.filter((_, i) => i !== index) })
   }
 
   return (
@@ -240,7 +277,6 @@ function ProductForm({ product, onSave, onCancel }: { product: Product; onSave: 
           <label className="block text-sm font-semibold text-gray-900 mb-2">Zdjęcie produktu</label>
           
           <div className="space-y-4">
-            {/* Upload from computer */}
             <div>
               <label className="block text-sm text-gray-700 mb-2">Prześlij zdjęcie z komputera:</label>
               <input
@@ -252,7 +288,6 @@ function ProductForm({ product, onSave, onCancel }: { product: Product; onSave: 
               <p className="text-xs text-gray-500 mt-1">Maksymalny rozmiar: 5MB</p>
             </div>
 
-            {/* Or enter URL */}
             <div>
               <label className="block text-sm text-gray-700 mb-2">Lub wprowadź URL zdjęcia:</label>
               <input
@@ -264,7 +299,6 @@ function ProductForm({ product, onSave, onCancel }: { product: Product; onSave: 
               />
             </div>
 
-            {/* Preview */}
             {imagePreview && (
               <div className="mt-4">
                 <div className="flex justify-between items-center mb-2">
@@ -294,34 +328,6 @@ function ProductForm({ product, onSave, onCancel }: { product: Product; onSave: 
               </div>
             )}
           </div>
-        </div>
-        <div>
-          <label className="block text-sm font-semibold text-gray-900 mb-2">Cechy produktu</label>
-          {formData.features.map((feature, index) => (
-            <div key={index} className="flex gap-2 mb-2">
-              <input
-                type="text"
-                value={feature}
-                onChange={(e) => updateFeature(index, e.target.value)}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
-                placeholder="Cecha produktu"
-              />
-              <button
-                type="button"
-                onClick={() => removeFeature(index)}
-                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-              >
-                Usuń
-              </button>
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={addFeature}
-            className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
-          >
-            + Dodaj cechę
-          </button>
         </div>
         <div className="flex gap-4">
           <button

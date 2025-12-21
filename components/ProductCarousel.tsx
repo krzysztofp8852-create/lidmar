@@ -41,7 +41,7 @@ export default function ProductCarousel() {
   }, [currentIndex, products])
 
   useEffect(() => {
-    if (isAutoPlaying) {
+    if (isAutoPlaying && products.length > 0) {
       intervalRef.current = setInterval(() => {
         setCurrentIndex((prev) => (prev + 1) % products.length)
       }, 5000)
@@ -56,26 +56,44 @@ export default function ProductCarousel() {
         clearInterval(intervalRef.current)
       }
     }
-  }, [isAutoPlaying])
+  }, [isAutoPlaying, products.length])
 
   const goToNext = () => {
+    if (products.length === 0) return
     setIsAutoPlaying(false)
-    setCurrentIndex((prev) => (prev + 1) % products.length)
+    setCurrentIndex((prev) => {
+      const next = (prev + 1) % products.length
+      return next
+    })
   }
 
   const goToPrev = () => {
+    if (products.length === 0) return
     setIsAutoPlaying(false)
-    setCurrentIndex((prev) => (prev - 1 + products.length) % products.length)
+    setCurrentIndex((prev) => {
+      const prevIndex = (prev - 1 + products.length) % products.length
+      return prevIndex
+    })
   }
 
   const getProductPosition = (index: number) => {
     if (products.length === 0) return 'center'
+    if (products.length === 1) return 'center'
+    
     const diff = (index - currentIndex + products.length) % products.length
+    
     if (diff === 0) return 'center'
-    if (diff === 1) return 'right'
-    if (diff === products.length - 1) return 'left'
+    if (diff === 1) return 'right1'
+    if (diff === 2) return 'right2'
+    if (diff === products.length - 1) return 'left1'
+    if (diff === products.length - 2) return 'left2'
+    
     // Hide products that are too far
     return 'hidden'
+  }
+
+  if (products.length === 0) {
+    return null
   }
 
   return (
@@ -93,6 +111,8 @@ export default function ProductCarousel() {
         <div className="absolute inset-0 bg-black/50"></div>
         {/* Gradient transition from Hero at top */}
         <div className="absolute top-0 left-0 right-0 h-64 sm:h-80 lg:h-96 bg-gradient-to-b from-primary-dark/95 via-primary-dark/85 via-primary-dark/70 via-primary-dark/55 via-primary-dark/40 via-primary-dark/25 via-primary-dark/10 to-transparent"></div>
+        {/* Gradient transition to About section at bottom */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 sm:h-48 lg:h-64 bg-gradient-to-t from-primary-dark via-primary-dark/95 via-primary-dark/85 via-primary-dark/70 via-primary-dark/55 via-primary-dark/40 via-primary-dark/25 via-primary-dark/10 to-transparent"></div>
       </div>
       
       <div className="container-custom relative z-10">
@@ -115,16 +135,28 @@ export default function ProductCarousel() {
               scale = 1
               zIndex = 30
               display = 'block'
-            } else if (position === 'right') {
-              transformStyle = 'translate3d(60%, 0, -200px) scale(0.75)'
-              opacity = 0.6
+            } else if (position === 'right1') {
+              transformStyle = 'translate3d(50%, 0, -200px) scale(0.75)'
+              opacity = 0.7
               scale = 0.75
+              zIndex = 20
+              display = 'block'
+            } else if (position === 'right2') {
+              transformStyle = 'translate3d(90%, 0, -350px) scale(0.55)'
+              opacity = 0.4
+              scale = 0.55
               zIndex = 10
               display = 'block'
-            } else if (position === 'left') {
-              transformStyle = 'translate3d(-60%, 0, -200px) scale(0.75)'
-              opacity = 0.6
+            } else if (position === 'left1') {
+              transformStyle = 'translate3d(-50%, 0, -200px) scale(0.75)'
+              opacity = 0.7
               scale = 0.75
+              zIndex = 20
+              display = 'block'
+            } else if (position === 'left2') {
+              transformStyle = 'translate3d(-90%, 0, -350px) scale(0.55)'
+              opacity = 0.4
+              scale = 0.55
               zIndex = 10
               display = 'block'
             } else {
@@ -145,13 +177,19 @@ export default function ProductCarousel() {
                 }}
                 onClick={() => setSelectedProduct(product)}
               >
-                <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200 h-full flex flex-col">
-                  <div className="relative w-full h-[70%] bg-gray-200">
+                <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200 flex flex-col" style={{ height: '100%', minHeight: '400px' }}>
+                  <div className="relative w-full bg-gray-200 overflow-hidden" style={{ height: '280px', minHeight: '280px' }}>
                     {product.image ? (
                       <img
                         src={product.image}
                         alt={product.title}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover object-center"
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          objectPosition: 'center',
+                        }}
                         onError={(e) => {
                           (e.target as HTMLImageElement).style.display = 'none'
                           const parent = (e.target as HTMLImageElement).parentElement
@@ -161,12 +199,12 @@ export default function ProductCarousel() {
                         }}
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
+                      <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400" style={{ height: '280px' }}>
                         <span>Brak zdjęcia</span>
                       </div>
                     )}
                   </div>
-                  <div className="p-4 flex-1 flex flex-col justify-center">
+                  <div className="p-4 flex-1 flex flex-col justify-center" style={{ minHeight: '120px' }}>
                     <h3 className="text-xl sm:text-2xl font-semibold text-primary-dark mb-2">
                       {product.title}
                     </h3>
@@ -271,22 +309,9 @@ export default function ProductCarousel() {
               <h3 className="text-3xl sm:text-4xl font-semibold text-primary-dark mb-4">
                 {selectedProduct.title}
               </h3>
-              <p className="text-gray-700 mb-6 text-lg">
+              <p className="text-gray-700 text-lg leading-relaxed">
                 {selectedProduct.description}
               </p>
-              <div>
-                <h4 className="text-xl font-semibold text-primary-dark mb-4">
-                  Kluczowe cechy:
-                </h4>
-                <ul className="space-y-3">
-                  {selectedProduct.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-start text-gray-700">
-                      <span className="text-accent mr-3 font-bold">•</span>
-                      <span className="text-lg">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
             </div>
           </div>
         </div>

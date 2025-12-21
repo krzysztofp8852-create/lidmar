@@ -27,14 +27,14 @@ export default function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-primary-dark shadow-lg border-b border-primary">
       <div className="container-custom">
-        <div className="flex justify-between items-center h-20 sm:h-24">
+        <div className="flex justify-between items-center h-10 sm:h-12 lg:h-14">
           <Link href="/" className="flex items-center">
             <Image
               src="/logo.png"
               alt="LiD-MAR Logo"
-              width={300}
-              height={110}
-              className="h-20 sm:h-24 w-auto object-contain"
+              width={175}
+              height={65}
+              className="h-10 sm:h-12 lg:h-14 w-auto object-contain"
               priority
             />
           </Link>

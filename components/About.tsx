@@ -29,13 +29,13 @@ export default function About() {
   }, [content])
 
   return (
-    <section id="o-firmie" className="py-16 sm:py-20 lg:py-24 bg-white">
+    <section id="o-firmie" className="py-16 sm:py-20 lg:py-24 bg-primary-dark flex items-center justify-center">
       <div className="container-custom">
-        <div className="max-w-3xl">
-          <h2 className="text-3xl sm:text-4xl font-bold text-primary-dark mb-6">
+        <div className="max-w-2xl mx-auto flex flex-col justify-center">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
             O firmie
           </h2>
-          <div className="prose prose-lg max-w-none text-gray-700 space-y-4 whitespace-pre-line">
+          <div className="prose prose-lg max-w-none text-gray-100 space-y-4 whitespace-pre-line">
             {content || 'LiD-MAR to polski producent specjalizujący się w wytwarzaniu pasty BHP do mycia rąk dla zastosowań przemysłowych.'}
           </div>
         </div>

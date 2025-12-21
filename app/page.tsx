@@ -15,9 +15,7 @@ export default function Home() {
     <main className="min-h-screen">
       <Header />
       <Hero />
-      <ScrollReveal>
-        <ProductCarousel />
-      </ScrollReveal>
+      <ProductCarousel />
       <ScrollReveal>
         <About />
       </ScrollReveal>
@@ -40,4 +38,3 @@ export default function Home() {
     </main>
   )
 }
-

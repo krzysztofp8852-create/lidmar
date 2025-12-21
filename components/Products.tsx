@@ -2,10 +2,10 @@ export default function Products() {
   return (
     <section id="produkty" className="py-16 sm:py-20 lg:py-24 bg-gray-50">
       <div className="container-custom">
-        <h2 className="text-3xl sm:text-4xl font-bold text-primary-dark mb-12">
-          Produkty
-        </h2>
-        <div className="max-w-4xl">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl sm:text-4xl font-bold text-primary-dark mb-12 text-center">
+            Produkty
+          </h2>
           <div className="bg-white rounded-lg shadow-sm p-8 sm:p-10 border border-gray-200">
             <h3 className="text-2xl sm:text-3xl font-semibold text-primary-dark mb-6">
               Pasta BHP do mycia rąk

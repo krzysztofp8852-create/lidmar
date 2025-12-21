@@ -57,11 +57,11 @@ export default function AdminPanel() {
             Witaj w panelu administratora
           </h2>
           <p className="text-gray-700">
-            Tutaj możesz zarządzać treścią strony, produktami i ustawieniami.
+            Tutaj możesz zarządzać produktami i ustawieniami.
           </p>
         </div>
 
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
             <h3 className="text-lg font-semibold text-primary-dark mb-2">
               Produkty
@@ -74,33 +74,6 @@ export default function AdminPanel() {
               className="px-4 py-2 bg-primary-dark text-white rounded hover:bg-primary transition-colors"
             >
               Edytuj produkty
-            </button>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-            <h3 className="text-lg font-semibold text-primary-dark mb-2">
-              Treść strony
-            </h3>
-            <p className="text-gray-600 text-sm mb-4">
-              Edytuj treści sekcji strony
-            </p>
-            <button 
-              onClick={() => router.push('/admin/content')}
-              className="px-4 py-2 bg-primary-dark text-white rounded hover:bg-primary transition-colors"
-            >
-              Edytuj treść
-            </button>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-            <h3 className="text-lg font-semibold text-primary-dark mb-2">
-              Kontakt
-            </h3>
-            <p className="text-gray-600 text-sm mb-4">
-              Zarządzaj danymi kontaktowymi
-            </p>
-            <button className="px-4 py-2 bg-primary-dark text-white rounded hover:bg-primary transition-colors">
-              Edytuj kontakt
             </button>
           </div>
         </div>

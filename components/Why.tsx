@@ -52,23 +52,25 @@ export default function Why() {
   return (
     <section id="dlaczego-lidmar" className="py-16 sm:py-20 lg:py-24 bg-gray-50">
       <div className="container-custom">
-        <h2 className="text-3xl sm:text-4xl font-bold text-primary-dark mb-12">
-          Dlaczego LiD-MAR
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {benefitsToShow.map((benefit, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-lg shadow-sm p-8 border border-gray-200"
-            >
-              <h3 className="text-xl font-semibold text-primary-dark mb-3">
-                {benefit.title}
-              </h3>
-              <p className="text-gray-700 leading-relaxed">
-                {benefit.description}
-              </p>
-            </div>
-          ))}
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl sm:text-4xl font-bold text-primary-dark mb-12 text-center">
+            Dlaczego LiD-MAR
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {benefitsToShow.map((benefit, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-lg shadow-sm p-8 border border-gray-200"
+              >
+                <h3 className="text-xl font-semibold text-primary-dark mb-3">
+                  {benefit.title}
+                </h3>
+                <p className="text-gray-700 leading-relaxed">
+                  {benefit.description}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

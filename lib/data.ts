@@ -112,31 +112,49 @@ Skontaktuj się z nami, aby omówić szczegóły współpracy B2B.`,
 
 export const getProducts = (): Product[] => {
   if (typeof window === 'undefined') return defaultProducts
-  const stored = localStorage.getItem('products')
-  if (!stored) {
-    localStorage.setItem('products', JSON.stringify(defaultProducts))
+  try {
+    const stored = localStorage.getItem('products')
+    if (!stored) {
+      localStorage.setItem('products', JSON.stringify(defaultProducts))
+      return defaultProducts
+    }
+    return JSON.parse(stored)
+  } catch (error) {
+    console.error('Błąd podczas odczytywania produktów:', error)
     return defaultProducts
   }
-  return JSON.parse(stored)
 }
 
 export const saveProducts = (products: Product[]): void => {
   if (typeof window === 'undefined') return
-  localStorage.setItem('products', JSON.stringify(products))
+  try {
+    localStorage.setItem('products', JSON.stringify(products))
+  } catch (error) {
+    console.error('Błąd podczas zapisywania produktów:', error)
+  }
 }
 
 export const getSiteContent = (): SiteContent => {
   if (typeof window === 'undefined') return defaultContent
-  const stored = localStorage.getItem('siteContent')
-  if (!stored) {
-    localStorage.setItem('siteContent', JSON.stringify(defaultContent))
+  try {
+    const stored = localStorage.getItem('siteContent')
+    if (!stored) {
+      localStorage.setItem('siteContent', JSON.stringify(defaultContent))
+      return defaultContent
+    }
+    return JSON.parse(stored)
+  } catch (error) {
+    console.error('Błąd podczas odczytywania treści:', error)
     return defaultContent
   }
-  return JSON.parse(stored)
 }
 
 export const saveSiteContent = (content: SiteContent): void => {
   if (typeof window === 'undefined') return
-  localStorage.setItem('siteContent', JSON.stringify(content))
+  try {
+    localStorage.setItem('siteContent', JSON.stringify(content))
+  } catch (error) {
+    console.error('Błąd podczas zapisywania treści:', error)
+  }
 }
 

@@ -20,19 +20,22 @@ export default function Hero() {
     // Check periodically for changes
     const interval = setInterval(() => {
       const newContent = getSiteContent().hero
-      if (JSON.stringify(newContent) !== JSON.stringify(content)) {
-        setContent(newContent)
-      }
+      setContent((prevContent) => {
+        if (JSON.stringify(newContent) !== JSON.stringify(prevContent)) {
+          return newContent
+        }
+        return prevContent
+      })
     }, 500)
     
     return () => {
       window.removeEventListener('storage', handleStorageChange)
       clearInterval(interval)
     }
-  }, [content])
+  }, [])
 
   return (
-    <section className="relative pt-36 sm:pt-40 lg:pt-44 pb-20 sm:pb-28 lg:pb-32 text-white overflow-hidden">
+    <section className="relative pt-32 sm:pt-36 lg:pt-40 pb-20 sm:pb-28 lg:pb-32 text-white overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image
@@ -65,16 +68,9 @@ export default function Hero() {
             >
               Zapytaj o ofertę
             </a>
-            <a
-              href="#kontakt"
-              className="inline-flex items-center justify-center px-8 py-4 bg-transparent border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-primary-dark transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent shadow-lg"
-            >
-              Kontakt
-            </a>
           </div>
         </div>
       </div>
     </section>
   )
 }
-

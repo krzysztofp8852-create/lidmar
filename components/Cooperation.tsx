@@ -29,13 +29,13 @@ export default function Cooperation() {
   }, [content])
 
   return (
-    <section id="wspolpraca" className="py-16 sm:py-20 lg:py-24 bg-white">
+    <section id="wspolpraca" className="py-16 sm:py-20 lg:py-24 bg-primary-dark">
       <div className="container-custom">
-        <div className="max-w-3xl">
-          <h2 className="text-3xl sm:text-4xl font-bold text-primary-dark mb-6">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6 text-center">
             Współpraca
           </h2>
-          <div className="prose prose-lg max-w-none text-gray-700 space-y-4 whitespace-pre-line">
+          <div className="prose prose-lg max-w-none text-gray-100 space-y-4 whitespace-pre-line">
             {content || 'Oferujemy współpracę hurtową z firmami poszukującymi niezawodnego partnera w zakresie produktów BHP.'}
           </div>
         </div>

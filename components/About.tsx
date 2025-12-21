@@ -29,14 +29,23 @@ export default function About() {
   }, [content])
 
   return (
-    <section id="o-firmie" className="py-16 sm:py-20 lg:py-24 bg-primary-dark flex items-center justify-center">
+    <section id="o-firmie" className="py-12 sm:py-16 lg:py-20 bg-primary-dark flex items-center justify-center">
       <div className="container-custom">
-        <div className="max-w-2xl mx-auto flex flex-col justify-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
-            O firmie
-          </h2>
-          <div className="prose prose-lg max-w-none text-gray-100 space-y-4 whitespace-pre-line">
-            {content || 'LiD-MAR to polski producent specjalizujący się w wytwarzaniu pasty BHP do mycia rąk dla zastosowań przemysłowych.'}
+        <div className="max-w-4xl mx-auto flex flex-col justify-center">
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <h2 className="text-3xl sm:text-4xl font-bold text-white text-center drop-shadow-lg [text-shadow:_1px_1px_4px_rgb(0_0_0_/_0.8)]">
+              O firmie
+            </h2>
+            <img 
+              src="/ofirmie.gif" 
+              alt="O firmie" 
+              className="h-6 w-6 sm:h-8 sm:w-8"
+            />
+          </div>
+          <div className="p-6 sm:p-8">
+            <div className="prose prose-xl max-w-none text-gray-100 space-y-4 whitespace-pre-line text-lg sm:text-xl [text-shadow:_1px_1px_3px_rgb(0_0_0_/_0.8)]">
+              {content || 'LiD-MAR to polski producent specjalizujący się w wytwarzaniu pasty BHP do mycia rąk dla zastosowań przemysłowych.'}
+            </div>
           </div>
         </div>
       </div>

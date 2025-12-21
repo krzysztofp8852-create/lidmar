@@ -63,12 +63,20 @@ export default function Contact() {
   }
 
   return (
-    <section id="kontakt" className="py-16 sm:py-20 lg:py-24 bg-gray-50">
+    <section id="kontakt" className="py-16 sm:py-20 lg:py-24 bg-gray-50 flex items-center justify-center">
       <div className="container-custom">
-        <h2 className="text-3xl sm:text-4xl font-bold text-primary-dark mb-12">
-          Kontakt
-        </h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center justify-center gap-4 mb-12">
+            <h2 className="text-3xl sm:text-4xl font-bold text-primary-dark text-center">
+              Kontakt
+            </h2>
+            <img 
+              src="/kontakt.gif" 
+              alt="Kontakt" 
+              className="h-6 w-6 sm:h-8 sm:w-8"
+            />
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <div>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
@@ -136,6 +144,7 @@ export default function Contact() {
               </p>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </section>

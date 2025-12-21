@@ -53,9 +53,16 @@ export default function Why() {
     <section id="dlaczego-lidmar" className="py-16 sm:py-20 lg:py-24 bg-gray-50">
       <div className="container-custom">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl font-bold text-primary-dark mb-12 text-center">
-            Dlaczego LiD-MAR
-          </h2>
+          <div className="flex items-center justify-center gap-4 mb-12">
+            <h2 className="text-3xl sm:text-4xl font-bold text-primary-dark text-center">
+              Dlaczego LiD-MAR
+            </h2>
+            <img 
+              src="/dlaczego.gif" 
+              alt="Dlaczego LiD-MAR" 
+              className="h-6 w-6 sm:h-8 sm:w-8"
+            />
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {benefitsToShow.map((benefit, index) => (
               <div

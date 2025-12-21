@@ -7,6 +7,7 @@ import { getSiteContent } from '@/lib/data'
 export default function Applications() {
   const [applications, setApplications] = useState<string[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [prevIndex, setPrevIndex] = useState(0)
 
   useEffect(() => {
     const siteContent = getSiteContent()
@@ -48,34 +49,51 @@ export default function Applications() {
 
   useEffect(() => {
     const interval = setInterval(() => {
+      setPrevIndex(currentIndex)
       setCurrentIndex((prev) => (prev + 1) % appsToShow.length)
     }, 5000)
 
     return () => clearInterval(interval)
-  }, [appsToShow.length])
+  }, [appsToShow.length, currentIndex])
 
   const goToNext = () => {
+    setPrevIndex(currentIndex)
     setCurrentIndex((prev) => (prev + 1) % appsToShow.length)
   }
 
   const goToPrev = () => {
+    setPrevIndex(currentIndex)
     setCurrentIndex((prev) => (prev - 1 + appsToShow.length) % appsToShow.length)
   }
 
   const currentApp = appsToShow[currentIndex]
   const currentBg = backgroundImages[currentIndex] || backgroundImages[0]
+  const prevBg = backgroundImages[prevIndex] || backgroundImages[0]
 
   return (
-    <section id="zastosowania" className="py-32 sm:py-40 lg:py-48 bg-primary-dark relative overflow-hidden min-h-[60vh] flex items-center justify-center">
-      {/* Background Image */}
+    <section id="zastosowania" className="py-16 sm:py-20 lg:py-24 bg-primary-dark relative overflow-hidden min-h-[40vh] flex items-center justify-center">
+      {/* Background Images with Crossfade */}
       <div className="absolute inset-0 z-0">
+        {/* Base image layer */}
         <Image
+          key={`base-${currentIndex}`}
           src={currentBg}
           alt=""
           fill
-          className="object-cover transition-opacity duration-1000"
+          className="object-cover"
           priority
         />
+        {/* Fading out previous image */}
+        {prevIndex !== currentIndex && (
+          <Image
+            key={`fade-${prevIndex}`}
+            src={prevBg}
+            alt=""
+            fill
+            className="object-cover animate-fade-out"
+            priority
+          />
+        )}
         {/* Dark overlay */}
         <div className="absolute inset-0 bg-black/60"></div>
       </div>
@@ -86,8 +104,8 @@ export default function Applications() {
             Zastosowania
           </h2>
           
-          <div className="bg-white/10 backdrop-blur-md rounded-lg p-8 sm:p-12 border border-white/20 inline-block mb-8">
-            <div className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-white drop-shadow-lg [text-shadow:_1px_1px_4px_rgb(0_0_0_/_0.8)]">
+          <div className="glass-card rounded-lg p-8 sm:p-12 inline-block mb-8">
+            <div className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-white drop-shadow-lg [text-shadow:_1px_1px_4px_rgb(0_0_0_/_0.8)] relative z-10">
               {currentApp}
             </div>
           </div>
@@ -96,7 +114,7 @@ export default function Applications() {
           <div className="flex justify-center items-center gap-4">
             <button
               onClick={goToPrev}
-              className="p-3 sm:p-4 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full border border-white/30 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent"
+              className="glass-button p-3 sm:p-4 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent relative z-10"
               aria-label="Poprzednie zastosowanie"
             >
               <svg
@@ -114,7 +132,7 @@ export default function Applications() {
 
             <button
               onClick={goToNext}
-              className="p-3 sm:p-4 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full border border-white/30 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent"
+              className="glass-button p-3 sm:p-4 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent relative z-10"
               aria-label="Następne zastosowanie"
             >
               <svg

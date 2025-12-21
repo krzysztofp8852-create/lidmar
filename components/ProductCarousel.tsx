@@ -222,7 +222,7 @@ export default function ProductCarousel() {
         <div className="flex justify-center items-center gap-4 mt-8">
           <button
             onClick={goToPrev}
-            className="p-3 bg-primary-dark text-white rounded-full hover:bg-primary transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+            className="p-3 bg-black text-white rounded-full hover:bg-gray-800 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
             aria-label="Poprzedni produkt"
           >
             <svg
@@ -240,7 +240,7 @@ export default function ProductCarousel() {
 
           <button
             onClick={goToNext}
-            className="p-3 bg-primary-dark text-white rounded-full hover:bg-primary transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+            className="p-3 bg-black text-white rounded-full hover:bg-gray-800 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
             aria-label="Następny produkt"
           >
             <svg

@@ -1,11 +1,23 @@
 'use client'
 
-import Image from 'next/image'
-import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY
+      // Zmień tło po zescrollowaniu o 100px
+      setIsScrolled(scrollPosition > 100)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
 
   const navItems = [
     { label: 'O firmie', href: '#o-firmie' },
@@ -25,27 +37,24 @@ export default function Header() {
   }
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-primary-dark shadow-lg border-b border-primary">
+    <header 
+      className={`sticky top-0 left-0 right-0 z-50 will-change-[background-color,border-color] transition-[background-color,border-color] duration-200 ease-out ${
+        isScrolled 
+          ? 'bg-primary-dark border-b border-primary/50' 
+          : 'bg-transparent border-b border-transparent'
+      }`}
+    >
       <div className="container-custom">
-        <div className="flex justify-between items-center h-10 sm:h-12 lg:h-14">
-          <Link href="/" className="flex items-center">
-            <Image
-              src="/logo.png"
-              alt="LiD-MAR Logo"
-              width={175}
-              height={65}
-              className="h-10 sm:h-12 lg:h-14 w-auto object-contain"
-              priority
-            />
-          </Link>
-          
+        <div className="flex justify-center items-center h-10 sm:h-12 lg:h-14">
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-1">
             {navItems.map((item) => (
               <button
                 key={item.href}
                 onClick={() => handleNavClick(item.href)}
-                className="px-4 py-2 text-sm font-medium text-white hover:text-accent transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-primary-dark rounded"
+                className={`px-4 py-2 text-sm font-medium text-white hover:text-red-600 transition-colors duration-200 focus:outline-none rounded ${
+                  !isScrolled ? 'drop-shadow-lg [text-shadow:_1px_1px_3px_rgb(0_0_0_/_0.8)]' : ''
+                }`}
               >
                 {item.label}
               </button>
@@ -55,7 +64,9 @@ export default function Header() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="lg:hidden p-2 text-white hover:text-accent focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-primary-dark rounded"
+            className={`lg:hidden p-2 text-white hover:text-red-600 focus:outline-none rounded ${
+              !isScrolled ? 'drop-shadow-lg [text-shadow:_1px_1px_3px_rgb(0_0_0_/_0.8)]' : ''
+            }`}
             aria-label="Toggle menu"
           >
             <svg
@@ -78,13 +89,17 @@ export default function Header() {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <nav className="lg:hidden pb-4 border-t border-primary mt-2 pt-4">
+          <nav className={`lg:hidden pb-4 mt-2 pt-4 ${
+            isScrolled 
+              ? 'border-t border-primary' 
+              : 'border-t border-white/30'
+          }`}>
             <div className="flex flex-col gap-2">
               {navItems.map((item) => (
                 <button
                   key={item.href}
                   onClick={() => handleNavClick(item.href)}
-                  className="px-4 py-2 text-left text-sm font-medium text-white hover:text-accent hover:bg-primary transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-primary-dark rounded"
+                  className="px-4 py-2 text-left text-sm font-medium text-white hover:text-red-600 hover:bg-primary transition-colors duration-200 focus:outline-none rounded"
                 >
                   {item.label}
                 </button>

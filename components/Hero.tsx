@@ -35,11 +35,11 @@ export default function Hero() {
   }, [])
 
   return (
-    <section className="relative pt-32 sm:pt-36 lg:pt-40 pb-20 sm:pb-28 lg:pb-32 text-white overflow-hidden">
+    <section className="relative -mt-[40px] sm:-mt-[56px] pt-[80px] sm:pt-[100px] lg:pt-[116px] pb-20 sm:pb-28 lg:pb-32 text-white overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/zlogiem.png"
+          src="/hero.png"
           alt=""
           fill
           className="object-cover"
@@ -54,17 +54,17 @@ export default function Hero() {
       
       {/* Content */}
       <div className="container-custom relative z-20">
-        <div className="max-w-4xl">
+        <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight drop-shadow-lg [text-shadow:_2px_2px_8px_rgb(0_0_0_/_0.8)]">
             {content.title || 'LiD-MAR – producent pasty BHP do mycia rąk'}
           </h1>
           <p className="text-xl sm:text-2xl text-gray-100 mb-8 leading-relaxed drop-shadow-lg [text-shadow:_1px_1px_4px_rgb(0_0_0_/_0.8)]">
             {content.subtitle || 'Produkujemy skuteczne pasty BHP do zastosowań przemysłowych – dla zakładów pracy, warsztatów i firm produkcyjnych.'}
           </p>
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href="#kontakt"
-              className="inline-flex items-center justify-center px-8 py-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-transparent shadow-lg"
+              className="inline-flex items-center justify-center px-8 py-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-transparent shadow-lg"
             >
               Zapytaj o ofertę
             </a>

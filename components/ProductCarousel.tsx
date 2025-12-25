@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import Image from 'next/image'
 import { getProducts, type Product } from '@/lib/data'
 
 export default function ProductCarousel() {
@@ -97,29 +96,16 @@ export default function ProductCarousel() {
   }
 
   return (
-    <section className="pt-0 sm:pt-2 lg:pt-4 pb-16 sm:pb-20 lg:pb-24 relative overflow-hidden">
-      {/* Background Image */}
-      <div className="absolute inset-0 z-0">
-        <Image
-          src="/podbusem.png"
-          alt=""
-          fill
-          className="object-cover"
-          priority
-        />
-        {/* Dark overlay */}
-        <div className="absolute inset-0 bg-black/50"></div>
-        {/* Gradient transition from Hero at top */}
-        <div className="absolute top-0 left-0 right-0 h-64 sm:h-80 lg:h-96 bg-gradient-to-b from-primary-dark/95 via-primary-dark/85 via-primary-dark/70 via-primary-dark/55 via-primary-dark/40 via-primary-dark/25 via-primary-dark/10 to-transparent"></div>
-        {/* Gradient transition to About section at bottom */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 sm:h-48 lg:h-64 bg-gradient-to-t from-primary-dark via-primary-dark/95 via-primary-dark/85 via-primary-dark/70 via-primary-dark/55 via-primary-dark/40 via-primary-dark/25 via-primary-dark/10 to-transparent"></div>
-      </div>
-      
+    <section id="produkty" className="pt-0 sm:pt-2 lg:pt-4 pb-16 sm:pb-20 lg:pb-24 relative overflow-hidden">
       <div className="container-custom relative z-10">
-        <div 
-          className="relative h-[400px] sm:h-[500px] flex items-center justify-center"
-          style={{ perspective: '1000px' }}
-        >
+        <h2 className="text-3xl sm:text-4xl font-bold text-primary-dark mb-8 sm:mb-12 text-center">
+          Produkty
+        </h2>
+      </div>
+      <div 
+        className="relative h-[400px] sm:h-[500px] flex items-center justify-center w-full"
+        style={{ perspective: '1000px' }}
+      >
           {products.map((product, index) => {
             const position = getProductPosition(index)
             
@@ -168,8 +154,8 @@ export default function ProductCarousel() {
                 key={product.id}
                 className="absolute transition-all duration-700 ease-in-out cursor-pointer"
                 style={{
-                  width: '70%',
-                  maxWidth: '450px',
+                  width: '90%',
+                  maxWidth: '800px',
                   transform: transformStyle,
                   opacity: opacity,
                   zIndex: zIndex,
@@ -177,7 +163,7 @@ export default function ProductCarousel() {
                 }}
                 onClick={() => setSelectedProduct(product)}
               >
-                <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200 flex flex-col" style={{ height: '100%', minHeight: '400px' }}>
+                <div className="rounded-lg shadow-lg overflow-hidden border border-gray-200 flex flex-col" style={{ height: '100%', minHeight: '400px', backgroundColor: '#0f1f35' }}>
                   <div className="relative w-full bg-gray-200 overflow-hidden" style={{ height: '280px', minHeight: '280px' }}>
                     {product.image ? (
                       <img
@@ -205,10 +191,10 @@ export default function ProductCarousel() {
                     )}
                   </div>
                   <div className="p-4 flex-1 flex flex-col justify-center" style={{ minHeight: '120px' }}>
-                    <h3 className="text-xl sm:text-2xl font-semibold text-primary-dark mb-2">
+                    <h3 className="text-xl sm:text-2xl font-semibold text-white mb-2">
                       {product.title}
                     </h3>
-                    <p className="text-gray-600 text-sm line-clamp-2">
+                    <p className="text-white text-sm line-clamp-2">
                       {product.description}
                     </p>
                   </div>
@@ -218,11 +204,12 @@ export default function ProductCarousel() {
           })}
         </div>
 
-        {/* Navigation Buttons */}
+      {/* Navigation Buttons */}
+      <div className="container-custom">
         <div className="flex justify-center items-center gap-4 mt-8">
           <button
             onClick={goToPrev}
-            className="p-3 bg-black text-white rounded-full hover:bg-gray-800 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+            className="p-3 bg-primary-dark text-white rounded-full hover:bg-primary transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
             aria-label="Poprzedni produkt"
           >
             <svg
@@ -240,7 +227,7 @@ export default function ProductCarousel() {
 
           <button
             onClick={goToNext}
-            className="p-3 bg-black text-white rounded-full hover:bg-gray-800 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+            className="p-3 bg-primary-dark text-white rounded-full hover:bg-primary transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
             aria-label="Następny produkt"
           >
             <svg

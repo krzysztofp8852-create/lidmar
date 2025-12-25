@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import LoadingSpinner from '@/components/LoadingSpinner'
 
 export const metadata: Metadata = {
   title: 'LiD-MAR – Producent pasty BHP do mycia rąk | Pasta BHP producent',
@@ -42,7 +43,10 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="font-sans">{children}</body>
+      <body className="font-sans">
+        <LoadingSpinner />
+        {children}
+      </body>
     </html>
   )
 }

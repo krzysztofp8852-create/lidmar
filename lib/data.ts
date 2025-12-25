@@ -34,6 +34,11 @@ export interface SiteContent {
     phone: string
     email: string
     address: string
+    message: string
+  }
+  footer: {
+    companyName: string
+    description: string
   }
 }
 
@@ -122,6 +127,11 @@ Skontaktuj się z nami, aby omówić szczegóły współpracy B2B.`,
     phone: '[Numer telefonu]',
     email: '[Adres email]',
     address: '[Adres firmy]',
+    message: 'Zapraszamy do kontaktu w sprawie współpracy B2B, wyceny zamówień hurtowych oraz indywidualnych warunków współpracy.',
+  },
+  footer: {
+    companyName: 'LiD-MAR',
+    description: 'Producent pasty BHP do mycia rąk',
   },
 }
 

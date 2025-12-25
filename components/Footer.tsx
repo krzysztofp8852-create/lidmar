@@ -1,22 +1,28 @@
 'use client'
 
+import { useSiteContent } from '@/lib/useSiteData'
+
 export default function Footer() {
+  const siteContent = useSiteContent()
+  const contact = siteContent.contact
+  const footer = siteContent.footer || { companyName: 'LiD-MAR', description: 'Producent pasty BHP do mycia rąk' }
+
   return (
     <footer className="bg-primary-dark text-white py-12">
       <div className="container-custom">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           <div>
-            <h3 className="text-xl font-bold mb-4">LiD-MAR</h3>
+            <h3 className="text-xl font-bold mb-4">{footer.companyName || 'LiD-MAR'}</h3>
             <p className="text-gray-300">
-              Producent pasty BHP do mycia rąk
+              {footer.description || 'Producent pasty BHP do mycia rąk'}
             </p>
           </div>
           <div>
             <h4 className="text-lg font-semibold mb-4">Kontakt</h4>
             <div className="space-y-2 text-gray-300 text-sm">
-              <p>Telefon: [Numer telefonu]</p>
-              <p>Email: [Adres email]</p>
-              <p>Adres: [Adres firmy]</p>
+              <p>Telefon: {contact.phone || '[Numer telefonu]'}</p>
+              <p>Email: {contact.email || '[Adres email]'}</p>
+              <p>Adres: {contact.address || '[Adres firmy]'}</p>
             </div>
           </div>
           <div>

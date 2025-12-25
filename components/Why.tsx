@@ -28,11 +28,11 @@ export default function Why() {
   const benefitsToShow = benefits && benefits.length > 0 ? benefits : defaultBenefits
 
   return (
-    <section id="dlaczego-lidmar" className="py-16 sm:py-20 lg:py-24 bg-gray-50">
+    <section id="dlaczego-lidmar" className="py-16 sm:py-20 lg:py-24 bg-primary-dark">
       <div className="container-custom">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-center gap-4 mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-primary-dark text-center">
+            <h2 className="text-3xl sm:text-4xl font-bold text-white text-center">
               Dlaczego LiD-MAR
             </h2>
             <img 

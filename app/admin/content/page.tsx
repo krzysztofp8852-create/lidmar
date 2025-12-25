@@ -113,6 +113,17 @@ export default function ContentAdmin() {
             { key: 'contact.phone', label: 'Telefon' },
             { key: 'contact.email', label: 'Email' },
             { key: 'contact.address', label: 'Adres' },
+            { key: 'contact.message', label: 'Wiadomość zapraszająca', type: 'textarea' },
+          ]}
+        />
+
+        <ContentSection
+          title="Stopka (Footer)"
+          content={content}
+          onChange={setContent}
+          fields={[
+            { key: 'footer.companyName', label: 'Nazwa firmy' },
+            { key: 'footer.description', label: 'Opis firmy' },
           ]}
         />
 
@@ -213,6 +224,10 @@ function ContentSection({ title, content, onChange, fields }: { title: string; c
     const newContent = { ...content } as any
     let current = newContent
     for (let i = 0; i < keys.length - 1; i++) {
+      if (!current[keys[i]]) {
+        current[keys[i]] = {}
+      }
+      current[keys[i]] = { ...current[keys[i]] }
       current = current[keys[i]]
     }
     current[keys[keys.length - 1]] = value
@@ -223,9 +238,10 @@ function ContentSection({ title, content, onChange, fields }: { title: string; c
     const keys = key.split('.')
     let current = content as any
     for (const k of keys) {
+      if (!current) return ''
       current = current[k]
     }
-    return current
+    return current || ''
   }
 
   return (

@@ -24,6 +24,9 @@ CREATE TABLE IF NOT EXISTS site_content (
   contact_phone TEXT NOT NULL,
   contact_email TEXT NOT NULL,
   contact_address TEXT NOT NULL,
+  contact_message TEXT NOT NULL,
+  footer_company_name TEXT NOT NULL DEFAULT 'LiD-MAR',
+  footer_description TEXT NOT NULL DEFAULT 'Producent pasty BHP do mycia rąk',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT site_content_single_row CHECK (id = 1)
@@ -53,7 +56,10 @@ INSERT INTO site_content (
   cooperation_content,
   contact_phone,
   contact_email,
-  contact_address
+  contact_address,
+  contact_message,
+  footer_company_name,
+  footer_description
 ) VALUES (
   1,
   'LiD-MAR – producent pasty BHP do mycia rąk',
@@ -78,5 +84,37 @@ Każdej firmie oferujemy indywidualne warunki współpracy dostosowane do potrze
 Skontaktuj się z nami, aby omówić szczegóły współpracy B2B.',
   '[Numer telefonu]',
   '[Adres email]',
-  '[Adres firmy]'
+  '[Adres firmy]',
+  'Zapraszamy do kontaktu w sprawie współpracy B2B, wyceny zamówień hurtowych oraz indywidualnych warunków współpracy.',
+  'LiD-MAR',
+  'Producent pasty BHP do mycia rąk'
 ) ON CONFLICT (id) DO NOTHING;
+
+-- Add contact_message column if it doesn't exist (for existing databases)
+DO $$ 
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'site_content' AND column_name = 'contact_message'
+  ) THEN
+    ALTER TABLE site_content ADD COLUMN contact_message TEXT NOT NULL DEFAULT 'Zapraszamy do kontaktu w sprawie współpracy B2B, wyceny zamówień hurtowych oraz indywidualnych warunków współpracy.';
+  END IF;
+END $$;
+
+-- Add footer columns if they don't exist (for existing databases)
+DO $$ 
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'site_content' AND column_name = 'footer_company_name'
+  ) THEN
+    ALTER TABLE site_content ADD COLUMN footer_company_name TEXT NOT NULL DEFAULT 'LiD-MAR';
+  END IF;
+  
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'site_content' AND column_name = 'footer_description'
+  ) THEN
+    ALTER TABLE site_content ADD COLUMN footer_description TEXT NOT NULL DEFAULT 'Producent pasty BHP do mycia rąk';
+  END IF;
+END $$;

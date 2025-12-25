@@ -71,6 +71,11 @@ export async function GET(request: NextRequest) {
         phone: row.contact_phone,
         email: row.contact_email,
         address: row.contact_address,
+        message: row.contact_message || 'Zapraszamy do kontaktu w sprawie współpracy B2B, wyceny zamówień hurtowych oraz indywidualnych warunków współpracy.',
+      },
+      footer: {
+        companyName: row.footer_company_name || 'LiD-MAR',
+        description: row.footer_description || 'Producent pasty BHP do mycia rąk',
       },
       _updatedAt: row.updated_at ? new Date(row.updated_at).toISOString() : undefined,
     }
@@ -125,6 +130,9 @@ export async function PUT(request: NextRequest) {
         contact_phone = ${content.contact.phone},
         contact_email = ${content.contact.email},
         contact_address = ${content.contact.address},
+        contact_message = ${content.contact.message || 'Zapraszamy do kontaktu w sprawie współpracy B2B, wyceny zamówień hurtowych oraz indywidualnych warunków współpracy.'},
+        footer_company_name = ${content.footer?.companyName || 'LiD-MAR'},
+        footer_description = ${content.footer?.description || 'Producent pasty BHP do mycia rąk'},
         updated_at = CURRENT_TIMESTAMP
       WHERE id = 1
     `

@@ -50,20 +50,20 @@ export default function Applications() {
   const prevBg = backgroundImages[prevIndex] || backgroundImages[0]
 
   return (
-    <section id="zastosowania" className="py-16 sm:py-20 lg:py-24 bg-primary-dark relative overflow-hidden shadow-2xl">
+    <section id="zastosowania" className="py-16 sm:py-20 lg:py-24 bg-white relative overflow-hidden shadow-2xl">
       <div className="container-custom relative z-10">
-        <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-12 text-center drop-shadow-lg [text-shadow:_2px_2px_8px_rgb(0_0_0_/_0.8)]">
+        <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-primary-dark mb-12 text-center">
           Zastosowania
         </h2>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Left side - Description and Navigation */}
           <div className="flex flex-col justify-center space-y-6">
-            <div className="glass-card rounded-lg p-6 sm:p-8 lg:p-10">
-              <div className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-white drop-shadow-lg [text-shadow:_1px_1px_4px_rgb(0_0_0_/_0.8)] mb-4">
+            <div className="bg-primary-dark rounded-lg p-6 sm:p-8 lg:p-10 shadow-lg">
+              <div className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-white mb-4">
                 {currentApp?.title || ''}
               </div>
-              <p className="text-white/90 text-lg sm:text-xl leading-relaxed drop-shadow-lg [text-shadow:_1px_1px_3px_rgb(0_0_0_/_0.8)]">
+              <p className="text-white/90 text-lg sm:text-xl leading-relaxed">
                 {currentApp?.description || ''}
               </p>
             </div>
@@ -72,7 +72,7 @@ export default function Applications() {
             <div className="flex items-center gap-4">
               <button
                 onClick={goToPrev}
-                className="glass-button p-3 sm:p-4 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent hover:scale-110"
+                className="bg-primary-dark p-3 sm:p-4 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-dark focus:ring-offset-2 focus:ring-offset-transparent hover:scale-110 shadow-md"
                 aria-label="Poprzednie zastosowanie"
               >
                 <svg
@@ -98,8 +98,8 @@ export default function Applications() {
                     }}
                     className={`h-2 rounded-full transition-all duration-200 ${
                       index === currentIndex
-                        ? 'bg-white w-8'
-                        : 'bg-white/50 w-2 hover:bg-white/75'
+                        ? 'bg-primary-dark w-8'
+                        : 'bg-primary-dark/50 w-2 hover:bg-primary-dark/75'
                     }`}
                     aria-label={`Przejdź do ${appsToShow[index]}`}
                   />
@@ -108,7 +108,7 @@ export default function Applications() {
 
               <button
                 onClick={goToNext}
-                className="glass-button p-3 sm:p-4 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent hover:scale-110"
+                className="bg-primary-dark p-3 sm:p-4 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-dark focus:ring-offset-2 focus:ring-offset-transparent hover:scale-110 shadow-md"
                 aria-label="Następne zastosowanie"
               >
                 <svg

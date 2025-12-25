@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, useState } from 'react'
+import { FormEvent, useState, useEffect } from 'react'
 import { useSiteContent } from '@/lib/useSiteData'
 
 function ContactInfo() {
@@ -39,6 +39,13 @@ export default function Contact() {
     message: '',
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
+  const siteContent = useSiteContent()
+  const contact = siteContent.contact
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -65,6 +72,23 @@ export default function Contact() {
               className="h-6 w-6 sm:h-8 sm:w-8"
             />
           </div>
+          
+          {/* Mapa Google */}
+          <div className="mb-12 rounded-lg overflow-hidden shadow-lg bg-gray-200" style={{ minHeight: '450px' }}>
+            {isMounted && (
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1501.9599610069984!2d17.447930587919775!3d51.818624593926636!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47053952a3ab6a81%3A0xa908758804f9b10c!2sPWHU%20LiD-MAR!5e1!3m2!1spl!2spl!4v1766693041705!5m2!1spl!2spl"
+                width="100%"
+                height="450"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="w-full"
+              />
+            )}
+          </div>
+          
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <div>
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -128,8 +152,7 @@ export default function Contact() {
             </div>
             <div className="bg-white rounded-lg p-6 border border-gray-200">
               <p className="text-gray-700">
-                Zapraszamy do kontaktu w sprawie współpracy B2B, wyceny zamówień hurtowych 
-                oraz indywidualnych warunków współpracy.
+                {contact.message || 'Zapraszamy do kontaktu w sprawie współpracy B2B, wyceny zamówień hurtowych oraz indywidualnych warunków współpracy.'}
               </p>
             </div>
           </div>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -32,6 +32,10 @@ export default function Header() {
     setIsMenuOpen(false)
     const element = document.querySelector(href)
     if (element) {
+      // Wyciągnij nazwę segmentu z href (np. z "#kontakt" -> "kontakt")
+      const segment = href.replace('#', '')
+      // Zaktualizuj URL bez przeładowania strony
+      window.history.pushState(null, '', `/#${segment}`)
       element.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
   }

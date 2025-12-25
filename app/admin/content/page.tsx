@@ -2,37 +2,52 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { getSiteContent, saveSiteContent, type SiteContent } from '@/lib/data'
+import { useSession } from 'next-auth/react'
+import { getSiteContentSync, getSiteContent, saveSiteContent, type SiteContent } from '@/lib/data'
 
 export default function ContentAdmin() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
+  const { data: session, status } = useSession()
   const [content, setContent] = useState<SiteContent | null>(null)
+  const [isSaving, setIsSaving] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
-    const auth = localStorage.getItem('adminAuth')
-    if (auth === 'true') {
-      setIsAuthenticated(true)
-      setContent(getSiteContent())
-    } else {
+    if (status === 'unauthenticated') {
       router.push('/admin/login')
+      return
     }
-    setIsLoading(false)
-  }, [router])
+    
+    if (status === 'authenticated') {
+      // Load from localStorage immediately (sync)
+      setContent(getSiteContentSync())
+      
+      // Sync with API in background
+      getSiteContent().then(apiContent => {
+        setContent(apiContent)
+      }).catch(console.error)
+    }
+  }, [status, router])
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (content) {
-      saveSiteContent(content)
-      alert('Treść została zapisana!')
+      setIsSaving(true)
+      try {
+        await saveSiteContent(content)
+        alert('Treść została zapisana!')
+      } catch (error) {
+        console.error('Błąd podczas zapisywania:', error)
+        alert('Wystąpił błąd podczas zapisywania. Spróbuj ponownie.')
+      } finally {
+        setIsSaving(false)
+      }
     }
   }
 
-  if (isLoading) {
+  if (status === 'loading') {
     return <div className="min-h-screen flex items-center justify-center">Ładowanie...</div>
   }
 
-  if (!isAuthenticated || !content) return null
+  if (status === 'unauthenticated' || !content) return null
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -42,7 +57,7 @@ export default function ContentAdmin() {
             <div className="flex items-center gap-4">
               <button
                 onClick={() => router.push('/admin')}
-                className="px-4 py-2 bg-primary hover:bg-primary-light rounded-lg transition-colors"
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
               >
                 ← Powrót
               </button>
@@ -50,9 +65,12 @@ export default function ContentAdmin() {
             </div>
             <button
               onClick={handleSave}
-              className="px-6 py-2 bg-accent hover:bg-accent-dark rounded-lg transition-colors"
+              disabled={isSaving}
+              className={`px-6 py-2 rounded-lg transition-colors ${
+                isSaving ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700'
+              }`}
             >
-              Zapisz zmiany
+              {isSaving ? 'Zapisywanie...' : 'Zapisz zmiany'}
             </button>
           </div>
         </div>
@@ -100,27 +118,43 @@ export default function ContentAdmin() {
 
         <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
           <h3 className="text-lg font-semibold text-primary-dark mb-4">Zastosowania</h3>
-          <div className="space-y-2">
+          <div className="space-y-4">
             {content.applications.map((app, index) => (
-              <input
-                key={index}
-                type="text"
-                value={app}
-                onChange={(e) => {
-                  const newApps = [...content.applications]
-                  newApps[index] = e.target.value
-                  setContent({ ...content, applications: newApps })
-                }}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
-              />
+              <div key={index} className="border border-gray-200 rounded-lg p-4">
+                <label className="block text-sm font-semibold text-gray-900 mb-2">Nazwa zastosowania</label>
+                <input
+                  type="text"
+                  value={typeof app === 'string' ? app : (app.title || '')}
+                  onChange={(e) => {
+                    const newApps = [...content.applications]
+                    if (typeof newApps[index] === 'string') {
+                      newApps[index] = { title: e.target.value, description: '' }
+                    } else {
+                      newApps[index] = { ...newApps[index], title: e.target.value }
+                    }
+                    setContent({ ...content, applications: newApps })
+                  }}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-accent"
+                  placeholder="Nazwa zastosowania"
+                />
+                <label className="block text-sm font-semibold text-gray-900 mb-2">Opis zastosowania</label>
+                <textarea
+                  value={typeof app === 'string' ? '' : (app.description || '')}
+                  onChange={(e) => {
+                    const newApps = [...content.applications]
+                    if (typeof newApps[index] === 'string') {
+                      newApps[index] = { title: newApps[index] as string, description: e.target.value }
+                    } else {
+                      newApps[index] = { ...newApps[index], description: e.target.value }
+                    }
+                    setContent({ ...content, applications: newApps })
+                  }}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+                  rows={3}
+                  placeholder="Opis zastosowania"
+                />
+              </div>
             ))}
-            <button
-              type="button"
-              onClick={() => setContent({ ...content, applications: [...content.applications, ''] })}
-              className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
-            >
-              + Dodaj zastosowanie
-            </button>
           </div>
         </div>
 
@@ -154,6 +188,19 @@ export default function ContentAdmin() {
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Przycisk Zapisz na dole strony */}
+        <div className="flex justify-center pt-6 pb-8">
+          <button
+            onClick={handleSave}
+            disabled={isSaving}
+            className={`px-8 py-4 text-white font-semibold rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl ${
+              isSaving ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700'
+            }`}
+          >
+            {isSaving ? 'Zapisywanie...' : 'Zapisz zmiany'}
+          </button>
         </div>
       </div>
     </div>
@@ -209,4 +256,3 @@ function ContentSection({ title, content, onChange, fields }: { title: string; c
     </div>
   )
 }
-

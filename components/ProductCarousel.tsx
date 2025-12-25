@@ -1,43 +1,22 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { getProducts, type Product } from '@/lib/data'
+import { useProducts } from '@/lib/useProducts'
+import { type Product } from '@/lib/data'
 
 export default function ProductCarousel() {
-  const [products, setProducts] = useState<Product[]>([])
+  const products = useProducts()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
-    setProducts(getProducts())
-    
-    // Listen for storage changes to update products
-    const handleStorageChange = () => {
-      setProducts(getProducts())
-      if (currentIndex >= getProducts().length) {
-        setCurrentIndex(0)
-      }
+    // Reset index if products list changed
+    if (currentIndex >= products.length && products.length > 0) {
+      setCurrentIndex(0)
     }
-    window.addEventListener('storage', handleStorageChange)
-    
-    // Also check periodically for changes (for same-tab updates)
-    const interval = setInterval(() => {
-      const newProducts = getProducts()
-      if (JSON.stringify(newProducts) !== JSON.stringify(products)) {
-        setProducts(newProducts)
-        if (currentIndex >= newProducts.length) {
-          setCurrentIndex(0)
-        }
-      }
-    }, 500)
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange)
-      clearInterval(interval)
-    }
-  }, [currentIndex, products])
+  }, [products, currentIndex])
 
   useEffect(() => {
     if (isAutoPlaying && products.length > 0) {

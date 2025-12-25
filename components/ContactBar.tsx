@@ -1,33 +1,11 @@
 'use client'
 
 import Image from 'next/image'
-import { useState, useEffect } from 'react'
-import { getSiteContent } from '@/lib/data'
+import { useSiteContent } from '@/lib/useSiteData'
 
 export default function ContactBar() {
-  const [contact, setContact] = useState({ phone: '', email: '', address: '' })
-
-  useEffect(() => {
-    const siteContent = getSiteContent()
-    setContact(siteContent.contact)
-    
-    const handleStorageChange = () => {
-      setContact(getSiteContent().contact)
-    }
-    window.addEventListener('storage', handleStorageChange)
-    
-    const interval = setInterval(() => {
-      const newContact = getSiteContent().contact
-      if (JSON.stringify(newContact) !== JSON.stringify(contact)) {
-        setContact(newContact)
-      }
-    }, 500)
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange)
-      clearInterval(interval)
-    }
-  }, [contact])
+  const siteContent = useSiteContent()
+  const contact = siteContent.contact
 
   return (
     <div className="relative z-[60] bg-white">

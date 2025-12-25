@@ -2,43 +2,22 @@
 
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
-import { getSiteContent } from '@/lib/data'
+import { useSiteContent } from '@/lib/useSiteData'
 
 export default function Applications() {
-  const [applications, setApplications] = useState<string[]>([])
+  const siteContent = useSiteContent()
+  const applications = siteContent.applications
   const [currentIndex, setCurrentIndex] = useState(0)
   const [prevIndex, setPrevIndex] = useState(0)
 
-  useEffect(() => {
-    const siteContent = getSiteContent()
-    setApplications(siteContent.applications)
-    
-    const handleStorageChange = () => {
-      setApplications(getSiteContent().applications)
-    }
-    window.addEventListener('storage', handleStorageChange)
-    
-    const interval = setInterval(() => {
-      const newApps = getSiteContent().applications
-      if (JSON.stringify(newApps) !== JSON.stringify(applications)) {
-        setApplications(newApps)
-      }
-    }, 500)
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange)
-      clearInterval(interval)
-    }
-  }, [applications])
-
   const defaultApps = [
-    'zakłady produkcyjne',
-    'warsztaty mechaniczne',
-    'serwisy techniczne',
-    'przemysł ciężki i lekki',
+    { title: 'zakłady produkcyjne', description: 'Nasze produkty znajdują zastosowanie w zakładach produkcyjnych, zapewniając skuteczne i bezpieczne rozwiązania do mycia rąk w środowisku przemysłowym.' },
+    { title: 'warsztaty mechaniczne', description: 'Nasze produkty znajdują zastosowanie w warsztatach mechanicznych, zapewniając skuteczne i bezpieczne rozwiązania do mycia rąk w środowisku przemysłowym.' },
+    { title: 'serwisy techniczne', description: 'Nasze produkty znajdują zastosowanie w serwisach technicznych, zapewniając skuteczne i bezpieczne rozwiązania do mycia rąk w środowisku przemysłowym.' },
+    { title: 'przemysł ciężki i lekki', description: 'Nasze produkty znajdują zastosowanie w przemyśle ciężkim i lekkim, zapewniając skuteczne i bezpieczne rozwiązania do mycia rąk w środowisku przemysłowym.' },
   ]
 
-  const appsToShow = applications.length > 0 ? applications : defaultApps
+  const appsToShow = applications && applications.length > 0 ? applications : defaultApps
 
   const backgroundImages = [
     '/zaklady_prod.jpg',
@@ -82,10 +61,10 @@ export default function Applications() {
           <div className="flex flex-col justify-center space-y-6">
             <div className="glass-card rounded-lg p-6 sm:p-8 lg:p-10">
               <div className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-white drop-shadow-lg [text-shadow:_1px_1px_4px_rgb(0_0_0_/_0.8)] mb-4">
-                {currentApp}
+                {currentApp?.title || ''}
               </div>
               <p className="text-white/90 text-lg sm:text-xl leading-relaxed drop-shadow-lg [text-shadow:_1px_1px_3px_rgb(0_0_0_/_0.8)]">
-                Nasze produkty znajdują zastosowanie w {currentApp}, zapewniając skuteczne i bezpieczne rozwiązania do mycia rąk w środowisku przemysłowym.
+                {currentApp?.description || ''}
               </p>
             </div>
 
@@ -147,13 +126,13 @@ export default function Applications() {
             </div>
           </div>
 
-          {/* Right side - Images */}
+            {/* Right side - Images */}
           <div className="relative h-[300px] sm:h-[400px] lg:h-[500px] rounded-lg overflow-hidden shadow-2xl">
             {/* Base image layer */}
             <Image
               key={`base-${currentIndex}`}
               src={currentBg}
-              alt={currentApp}
+              alt={currentApp?.title || ''}
               fill
               className="object-cover transition-opacity duration-500"
               priority

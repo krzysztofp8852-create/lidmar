@@ -1,32 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { getSiteContent } from '@/lib/data'
+import { useSiteContent } from '@/lib/useSiteData'
 
 export default function Why() {
-  const [benefits, setBenefits] = useState<Array<{ title: string; description: string }>>([])
-
-  useEffect(() => {
-    const siteContent = getSiteContent()
-    setBenefits(siteContent.why)
-    
-    const handleStorageChange = () => {
-      setBenefits(getSiteContent().why)
-    }
-    window.addEventListener('storage', handleStorageChange)
-    
-    const interval = setInterval(() => {
-      const newBenefits = getSiteContent().why
-      if (JSON.stringify(newBenefits) !== JSON.stringify(benefits)) {
-        setBenefits(newBenefits)
-      }
-    }, 500)
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange)
-      clearInterval(interval)
-    }
-  }, [benefits])
+  const siteContent = useSiteContent()
+  const benefits = siteContent.why
 
   const defaultBenefits = [
     {
@@ -47,7 +25,7 @@ export default function Why() {
     },
   ]
 
-  const benefitsToShow = benefits.length > 0 ? benefits : defaultBenefits
+  const benefitsToShow = benefits && benefits.length > 0 ? benefits : defaultBenefits
 
   return (
     <section id="dlaczego-lidmar" className="py-16 sm:py-20 lg:py-24 bg-gray-50">

@@ -1,3 +1,5 @@
+'use client'
+
 export default function Footer() {
   return (
     <footer className="bg-primary-dark text-white py-12">
@@ -36,7 +38,17 @@ export default function Footer() {
           </div>
         </div>
         <div className="border-t border-gray-700 pt-8 text-center text-gray-400 text-sm">
-          <p>&copy; {new Date().getFullYear()} LiD-MAR. Wszelkie prawa zastrzeżone.</p>
+          <p>
+            &copy; {new Date().getFullYear()} Made by{' '}
+            <a
+              href="https://krzysztofp.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-300 hover:text-white transition-colors underline"
+            >
+              Krzysztof Pabich
+            </a>
+          </p>
         </div>
       </div>
     </footer>

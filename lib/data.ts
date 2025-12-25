@@ -19,7 +19,10 @@ export interface SiteContent {
     description: string
     features: string[]
   }
-  applications: string[]
+  applications: Array<{
+    title: string
+    description: string
+  }>
   why: Array<{
     title: string
     description: string
@@ -34,7 +37,7 @@ export interface SiteContent {
   }
 }
 
-const defaultProducts: Product[] = [
+export const defaultProducts: Product[] = [
   {
     id: '1',
     title: 'Pasta BHP do mycia rąk',
@@ -48,7 +51,7 @@ const defaultProducts: Product[] = [
   },
 ]
 
-const defaultContent: SiteContent = {
+export const defaultContent: SiteContent = {
   hero: {
     title: 'LiD-MAR – producent pasty BHP do mycia rąk',
     subtitle: 'Produkujemy skuteczne pasty BHP do zastosowań przemysłowych – dla zakładów pracy, warsztatów i firm produkcyjnych.',
@@ -72,10 +75,22 @@ w zakresie higieny przemysłowej.`,
     ],
   },
   applications: [
-    'zakłady produkcyjne',
-    'warsztaty mechaniczne',
-    'serwisy techniczne',
-    'przemysł ciężki i lekki',
+    {
+      title: 'zakłady produkcyjne',
+      description: 'Nasze produkty znajdują zastosowanie w zakładach produkcyjnych, zapewniając skuteczne i bezpieczne rozwiązania do mycia rąk w środowisku przemysłowym.',
+    },
+    {
+      title: 'warsztaty mechaniczne',
+      description: 'Nasze produkty znajdują zastosowanie w warsztatach mechanicznych, zapewniając skuteczne i bezpieczne rozwiązania do mycia rąk w środowisku przemysłowym.',
+    },
+    {
+      title: 'serwisy techniczne',
+      description: 'Nasze produkty znajdują zastosowanie w serwisach technicznych, zapewniając skuteczne i bezpieczne rozwiązania do mycia rąk w środowisku przemysłowym.',
+    },
+    {
+      title: 'przemysł ciężki i lekki',
+      description: 'Nasze produkty znajdują zastosowanie w przemyśle ciężkim i lekkim, zapewniając skuteczne i bezpieczne rozwiązania do mycia rąk w środowisku przemysłowym.',
+    },
   ],
   why: [
     {
@@ -110,7 +125,175 @@ Skontaktuj się z nami, aby omówić szczegóły współpracy B2B.`,
   },
 }
 
-export const getProducts = (): Product[] => {
+export const getProducts = async (): Promise<Product[]> => {
+  if (typeof window === 'undefined') return defaultProducts
+  
+  try {
+    // Add cache busting to ensure fresh data
+    const response = await fetch(`/api/products?t=${Date.now()}`, {
+      cache: 'no-store',
+    })
+    if (response.ok) {
+      const products = await response.json()
+      // Remove _updatedAt before storing
+      const productsWithoutMeta = products.map((p: any) => {
+        const { _updatedAt, ...product } = p
+        return product
+      })
+      // Cache in localStorage as fallback
+      localStorage.setItem('products', JSON.stringify(productsWithoutMeta))
+      return productsWithoutMeta
+    }
+  } catch (error) {
+    console.error('Błąd podczas pobierania produktów z API:', error)
+  }
+  
+  // Fallback to localStorage
+  try {
+    const stored = localStorage.getItem('products')
+    if (stored) {
+      return JSON.parse(stored)
+    }
+  } catch (error) {
+    console.error('Błąd podczas odczytywania produktów z localStorage:', error)
+  }
+  
+  return defaultProducts
+}
+
+export const saveProducts = async (products: Product[]): Promise<void> => {
+  if (typeof window === 'undefined') return
+  
+  // Save to localStorage first for immediate feedback
+  try {
+    localStorage.setItem('products', JSON.stringify(products))
+  } catch (error) {
+    console.error('Błąd podczas zapisywania produktów do localStorage:', error)
+  }
+  
+  // Then sync with API
+  try {
+    // Delete all existing products and create new ones
+    const existingResponse = await fetch('/api/products')
+    if (existingResponse.ok) {
+      const existing = await existingResponse.json()
+      for (const product of existing) {
+        await fetch(`/api/products/${product.id}`, { method: 'DELETE' })
+      }
+    }
+    
+    // Create new products
+    for (const product of products) {
+      await fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(product),
+      })
+    }
+  } catch (error) {
+    console.error('Błąd podczas zapisywania produktów do API:', error)
+  }
+}
+
+export const getSiteContent = async (): Promise<SiteContent> => {
+  if (typeof window === 'undefined') return defaultContent
+  
+  try {
+    // Add cache busting to ensure fresh data
+    const response = await fetch(`/api/content?t=${Date.now()}`, {
+      cache: 'no-store',
+    })
+    if (response.ok) {
+      const content = await response.json()
+      // Remove _updatedAt before storing
+      const { _updatedAt, ...contentWithoutMeta } = content
+      // Cache in localStorage as fallback
+      localStorage.setItem('siteContent', JSON.stringify(contentWithoutMeta))
+      localStorage.setItem('siteContentUpdatedAt', _updatedAt || Date.now().toString())
+      return contentWithoutMeta
+    }
+  } catch (error) {
+    console.error('Błąd podczas pobierania treści z API:', error)
+  }
+  
+  // Fallback to localStorage
+  try {
+    const stored = localStorage.getItem('siteContent')
+    if (stored) {
+      const content = JSON.parse(stored)
+      
+      // Migracja: jeśli applications to tablica stringów, konwertuj na obiekty
+      if (content.applications && Array.isArray(content.applications) && content.applications.length > 0) {
+        if (typeof content.applications[0] === 'string') {
+          content.applications = content.applications.map((app: string) => ({
+            title: app,
+            description: `Nasze produkty znajdują zastosowanie w ${app}, zapewniając skuteczne i bezpieczne rozwiązania do mycia rąk w środowisku przemysłowym.`,
+          }))
+          localStorage.setItem('siteContent', JSON.stringify(content))
+        }
+      }
+      
+      return content
+    }
+  } catch (error) {
+    console.error('Błąd podczas odczytywania treści z localStorage:', error)
+  }
+  
+  return defaultContent
+}
+
+export const saveSiteContent = async (content: SiteContent): Promise<void> => {
+  if (typeof window === 'undefined') return
+  
+  // Save to localStorage first for immediate feedback
+  try {
+    localStorage.setItem('siteContent', JSON.stringify(content))
+  } catch (error) {
+    console.error('Błąd podczas zapisywania treści do localStorage:', error)
+  }
+  
+  // Then sync with API
+  try {
+    await fetch('/api/content', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(content),
+    })
+  } catch (error) {
+    console.error('Błąd podczas zapisywania treści do API:', error)
+  }
+}
+
+// Synchronous versions for backward compatibility (use localStorage only)
+export const getSiteContentSync = (): SiteContent => {
+  if (typeof window === 'undefined') return defaultContent
+  try {
+    const stored = localStorage.getItem('siteContent')
+    if (!stored) {
+      localStorage.setItem('siteContent', JSON.stringify(defaultContent))
+      return defaultContent
+    }
+    const content = JSON.parse(stored)
+    
+    // Migracja: jeśli applications to tablica stringów, konwertuj na obiekty
+    if (content.applications && Array.isArray(content.applications) && content.applications.length > 0) {
+      if (typeof content.applications[0] === 'string') {
+        content.applications = content.applications.map((app: string) => ({
+          title: app,
+          description: `Nasze produkty znajdują zastosowanie w ${app}, zapewniając skuteczne i bezpieczne rozwiązania do mycia rąk w środowisku przemysłowym.`,
+        }))
+        localStorage.setItem('siteContent', JSON.stringify(content))
+      }
+    }
+    
+    return content
+  } catch (error) {
+    console.error('Błąd podczas odczytywania treści:', error)
+    return defaultContent
+  }
+}
+
+export const getProductsSync = (): Product[] => {
   if (typeof window === 'undefined') return defaultProducts
   try {
     const stored = localStorage.getItem('products')
@@ -122,39 +305,6 @@ export const getProducts = (): Product[] => {
   } catch (error) {
     console.error('Błąd podczas odczytywania produktów:', error)
     return defaultProducts
-  }
-}
-
-export const saveProducts = (products: Product[]): void => {
-  if (typeof window === 'undefined') return
-  try {
-    localStorage.setItem('products', JSON.stringify(products))
-  } catch (error) {
-    console.error('Błąd podczas zapisywania produktów:', error)
-  }
-}
-
-export const getSiteContent = (): SiteContent => {
-  if (typeof window === 'undefined') return defaultContent
-  try {
-    const stored = localStorage.getItem('siteContent')
-    if (!stored) {
-      localStorage.setItem('siteContent', JSON.stringify(defaultContent))
-      return defaultContent
-    }
-    return JSON.parse(stored)
-  } catch (error) {
-    console.error('Błąd podczas odczytywania treści:', error)
-    return defaultContent
-  }
-}
-
-export const saveSiteContent = (content: SiteContent): void => {
-  if (typeof window === 'undefined') return
-  try {
-    localStorage.setItem('siteContent', JSON.stringify(content))
-  } catch (error) {
-    console.error('Błąd podczas zapisywania treści:', error)
   }
 }
 

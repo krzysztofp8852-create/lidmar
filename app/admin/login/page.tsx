@@ -1,23 +1,48 @@
 'use client'
 
 import { useState, FormEvent } from 'react'
-import { useRouter } from 'next/navigation'
+import { signIn } from 'next-auth/react'
+import { useRouter, useSearchParams } from 'next/navigation'
 
+/**
+ * Admin Login Page
+ * Uses NextAuth for secure authentication
+ */
 export default function AdminLogin() {
-  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
+  
+  // Get callback URL from query params or default to admin
+  const callbackUrl = searchParams.get('callbackUrl') || '/admin'
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setError('')
+    setIsLoading(true)
 
-    if (username === '123' && password === '123') {
-      localStorage.setItem('adminAuth', 'true')
-      router.push('/admin')
-    } else {
-      setError('Nieprawidłowy login lub hasło')
+    try {
+      // Use NextAuth signIn
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+        callbackUrl,
+      })
+
+      if (result?.error) {
+        setError('Nieprawidłowy email lub hasło')
+      } else if (result?.ok) {
+        router.push(callbackUrl)
+        router.refresh()
+      }
+    } catch (err) {
+      setError('Wystąpił błąd. Spróbuj ponownie.')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -35,18 +60,19 @@ export default function AdminLogin() {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
-              <label htmlFor="username" className="sr-only">
-                Login
+              <label htmlFor="email" className="sr-only">
+                Email
               </label>
               <input
-                id="username"
-                name="username"
-                type="text"
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
                 required
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-accent focus:border-accent focus:z-10 sm:text-sm"
-                placeholder="Login"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-red-500 focus:border-red-500 focus:z-10 sm:text-sm"
+                placeholder="Email"
               />
             </div>
             <div>
@@ -57,10 +83,11 @@ export default function AdminLogin() {
                 id="password"
                 name="password"
                 type="password"
+                autoComplete="current-password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-accent focus:border-accent focus:z-10 sm:text-sm"
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-red-500 focus:border-red-500 focus:z-10 sm:text-sm"
                 placeholder="Hasło"
               />
             </div>
@@ -75,14 +102,27 @@ export default function AdminLogin() {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-accent hover:bg-accent-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent"
+              disabled={isLoading}
+              className={`
+                group relative w-full flex justify-center py-2 px-4 border border-transparent 
+                text-sm font-medium rounded-md text-white transition-colors
+                ${isLoading
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500'
+                }
+              `}
             >
-              Zaloguj się
+              {isLoading ? 'Logowanie...' : 'Zaloguj się'}
             </button>
           </div>
         </form>
+        
+        <div className="text-center text-xs text-gray-500">
+          <p>Domyślne dane logowania:</p>
+          <p>Email: admin@lidmar.pl</p>
+          <p>Hasło: admin123</p>
+        </div>
       </div>
     </div>
   )
 }
-

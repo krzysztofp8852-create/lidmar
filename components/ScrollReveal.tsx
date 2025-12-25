@@ -8,10 +8,13 @@ interface ScrollRevealProps {
 }
 
 export default function ScrollReveal({ children, className = '' }: ScrollRevealProps) {
-  const [isVisible, setIsVisible] = useState(false)
+  const [isVisible, setIsVisible] = useState(true) // Start visible to avoid content hiding
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    // Only apply animation after mount
+    setIsVisible(false)
+    
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -19,8 +22,8 @@ export default function ScrollReveal({ children, className = '' }: ScrollRevealP
         }
       },
       {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px',
+        threshold: 0.05, // Lower threshold
+        rootMargin: '50px 0px', // Start animation earlier
       }
     )
 
@@ -28,24 +31,29 @@ export default function ScrollReveal({ children, className = '' }: ScrollRevealP
       observer.observe(ref.current)
     }
 
+    // Fallback - show content after 500ms if not visible yet
+    const fallbackTimer = setTimeout(() => {
+      setIsVisible(true)
+    }, 500)
+
     return () => {
       if (ref.current) {
         observer.unobserve(ref.current)
       }
+      clearTimeout(fallbackTimer)
     }
   }, [])
 
   return (
     <div
       ref={ref}
-      className={`transition-all duration-700 ease-out ${
+      className={`transition-all duration-500 ease-out ${
         isVisible
           ? 'opacity-100 translate-y-0'
-          : 'opacity-0 translate-y-8'
+          : 'opacity-0 translate-y-4'
       } ${className}`}
     >
       {children}
     </div>
   )
 }
-

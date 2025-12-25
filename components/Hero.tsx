@@ -1,38 +1,11 @@
 'use client'
 
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
-import { getSiteContent } from '@/lib/data'
+import { useSiteContent } from '@/lib/useSiteData'
 
 export default function Hero() {
-  const [content, setContent] = useState({ title: '', subtitle: '' })
-
-  useEffect(() => {
-    const siteContent = getSiteContent()
-    setContent(siteContent.hero)
-    
-    // Listen for storage changes
-    const handleStorageChange = () => {
-      setContent(getSiteContent().hero)
-    }
-    window.addEventListener('storage', handleStorageChange)
-    
-    // Check periodically for changes
-    const interval = setInterval(() => {
-      const newContent = getSiteContent().hero
-      setContent((prevContent) => {
-        if (JSON.stringify(newContent) !== JSON.stringify(prevContent)) {
-          return newContent
-        }
-        return prevContent
-      })
-    }, 500)
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange)
-      clearInterval(interval)
-    }
-  }, [])
+  const siteContent = useSiteContent()
+  const content = siteContent.hero
 
   return (
     <section className="relative -mt-[40px] sm:-mt-[56px] pt-[80px] sm:pt-[100px] lg:pt-[116px] pb-20 sm:pb-28 lg:pb-32 text-white overflow-hidden">
@@ -62,12 +35,17 @@ export default function Hero() {
             {content.subtitle || 'Produkujemy skuteczne pasty BHP do zastosowań przemysłowych – dla zakładów pracy, warsztatów i firm produkcyjnych.'}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="#kontakt"
+            <button
+              onClick={() => {
+                const element = document.getElementById('kontakt')
+                if (element) {
+                  element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                }
+              }}
               className="inline-flex items-center justify-center px-8 py-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-transparent shadow-lg"
             >
               Zapytaj o ofertę
-            </a>
+            </button>
           </div>
         </div>
       </div>

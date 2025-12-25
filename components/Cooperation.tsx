@@ -1,32 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { getSiteContent } from '@/lib/data'
+import { useSiteContent } from '@/lib/useSiteData'
 
 export default function Cooperation() {
-  const [content, setContent] = useState('')
-
-  useEffect(() => {
-    const siteContent = getSiteContent()
-    setContent(siteContent.cooperation.content)
-    
-    const handleStorageChange = () => {
-      setContent(getSiteContent().cooperation.content)
-    }
-    window.addEventListener('storage', handleStorageChange)
-    
-    const interval = setInterval(() => {
-      const newContent = getSiteContent().cooperation.content
-      if (newContent !== content) {
-        setContent(newContent)
-      }
-    }, 500)
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange)
-      clearInterval(interval)
-    }
-  }, [content])
+  const siteContent = useSiteContent()
+  const content = siteContent.cooperation.content
 
   return (
     <section id="wspolpraca" className="py-16 sm:py-20 lg:py-24 bg-primary-dark">

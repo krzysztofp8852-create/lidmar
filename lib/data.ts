@@ -239,10 +239,23 @@ export const getSiteContent = async (): Promise<SiteContent> => {
             title: app,
             description: `Nasze produkty znajdują zastosowanie w ${app}, zapewniając skuteczne i bezpieczne rozwiązania do mycia rąk w środowisku przemysłowym.`,
           }))
-          localStorage.setItem('siteContent', JSON.stringify(content))
         }
       }
       
+      // Migracja: dodaj footer jeśli nie istnieje
+      if (!content.footer) {
+        content.footer = {
+          companyName: 'LiD-MAR',
+          description: 'Producent pasty BHP do mycia rąk',
+        }
+      }
+      
+      // Migracja: dodaj contact.message jeśli nie istnieje
+      if (content.contact && !content.contact.message) {
+        content.contact.message = 'Zapraszamy do kontaktu w sprawie współpracy B2B, wyceny zamówień hurtowych oraz indywidualnych warunków współpracy.'
+      }
+      
+      localStorage.setItem('siteContent', JSON.stringify(content))
       return content
     }
   } catch (error) {
@@ -292,9 +305,24 @@ export const getSiteContentSync = (): SiteContent => {
           title: app,
           description: `Nasze produkty znajdują zastosowanie w ${app}, zapewniając skuteczne i bezpieczne rozwiązania do mycia rąk w środowisku przemysłowym.`,
         }))
-        localStorage.setItem('siteContent', JSON.stringify(content))
       }
     }
+    
+    // Migracja: dodaj footer jeśli nie istnieje
+    if (!content.footer) {
+      content.footer = {
+        companyName: 'LiD-MAR',
+        description: 'Producent pasty BHP do mycia rąk',
+      }
+    }
+    
+    // Migracja: dodaj contact.message jeśli nie istnieje
+    if (content.contact && !content.contact.message) {
+      content.contact.message = 'Zapraszamy do kontaktu w sprawie współpracy B2B, wyceny zamówień hurtowych oraz indywidualnych warunków współpracy.'
+    }
+    
+    // Zapisz zaktualizowane dane
+    localStorage.setItem('siteContent', JSON.stringify(content))
     
     return content
   } catch (error) {
@@ -317,4 +345,5 @@ export const getProductsSync = (): Product[] => {
     return defaultProducts
   }
 }
+
 

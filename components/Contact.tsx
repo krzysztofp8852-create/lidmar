@@ -34,7 +34,7 @@ function ContactInfo() {
 
 export default function Contact() {
   const [formData, setFormData] = useState({
-    company: '',
+    name: '',
     email: '',
     message: '',
   })
@@ -54,7 +54,7 @@ export default function Contact() {
     setTimeout(() => {
       setIsSubmitting(false)
       alert('Dziękujemy za wiadomość. Skontaktujemy się wkrótce.')
-      setFormData({ company: '', email: '', message: '' })
+      setFormData({ name: '', email: '', message: '' })
     }, 1000)
   }
 
@@ -93,15 +93,15 @@ export default function Contact() {
           <div>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label htmlFor="company" className="block text-sm font-semibold text-gray-900 mb-2">
-                  Nazwa firmy
+                <label htmlFor="name" className="block text-sm font-semibold text-gray-900 mb-2">
+                  Imię
                 </label>
                 <input
                   type="text"
-                  id="company"
-                  name="company"
-                  value={formData.company}
-                  onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
                 />

@@ -170,10 +170,10 @@ export default function ProductCarousel() {
                     )}
                   </div>
                   <div className="p-4 flex-1 flex flex-col justify-center" style={{ minHeight: '120px' }}>
-                    <h3 className="text-xl sm:text-2xl font-semibold text-white mb-2">
+                    <h3 className="text-xl sm:text-2xl font-semibold text-white mb-2 text-center">
                       {product.title}
                     </h3>
-                    <p className="text-white text-sm line-clamp-2">
+                    <p className="text-white text-sm line-clamp-2 text-center">
                       {product.description}
                     </p>
                   </div>
@@ -272,10 +272,10 @@ export default function ProductCarousel() {
               </button>
             </div>
             <div className="p-6 sm:p-8">
-              <h3 className="text-3xl sm:text-4xl font-semibold text-primary-dark mb-4">
+              <h3 className="text-3xl sm:text-4xl font-semibold text-primary-dark mb-4 text-center">
                 {selectedProduct.title}
               </h3>
-              <p className="text-gray-700 text-lg leading-relaxed">
+              <p className="text-gray-700 text-lg leading-relaxed text-center">
                 {selectedProduct.description}
               </p>
             </div>
